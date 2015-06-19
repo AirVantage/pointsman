@@ -9,6 +9,29 @@ Usage
 
 Binds your ELB HTTP listener on `HTTP_PORT` and HTTPS litener on `HTTP_PORT` and your backend with `BACKEND_PORT`.
 
+
+```
+                      HTTPS <¬   HTTP
+                        |    |    |
+                        v    |    v
+                   ---[:443]-|-[:80]----
+           ELB    |     |    |    |     |
+                  |     |    |    |     |
+                  |     |    |    |     |
+                  |-----|----|----|-----|
+                        v    |    v
+                   --[:8081]-|-[:8080]-- 
+                  |     |    |    |     |
+            EC2   |     |    |____|     |
+                  |     | haproxy       |
+                  |     v               |
+                  |  [:3000]            |
+                  |      backend        |
+                  |_____________________|
+                  
+
+```
+
 See `haproxy.cfg` file for more details.
 
 License
