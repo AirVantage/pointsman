@@ -5,29 +5,30 @@ Pointsman
 Usage
 -----
 
-`docker run -p 8080:8080 -p 8081:8081 -e HTTP_PORT=8080 -e HTTPS_PORT=8081 -e BACKEND_PORT=3000 --name pointsman airvantage/pointsman`
+`docker run -p 8080:8080 -p 8081:8081 -e FRONTEND_PORT=8080 -e BACKEND_PORT=3000 --name pointsman airvantage/pointsman`
 
-Binds your ELB HTTP listener on `HTTP_PORT` and HTTPS litener on `HTTP_PORT` and your backend with `BACKEND_PORT`.
+Binds your ELB HTTP and HTTPS listeners on `FRONTEND_PORT`  and your backend with `BACKEND_PORT`. We also open `:8081` port for the ELB health check.
 
 
 ```
-                      HTTPS <¬   HTTP
-                        |    |    |
-                        v    |    v
-                   ---[:443]-|-[:80]----
-           ELB    |     |    |    |     |
-                  |     |    |    |     |
-                  |     |    |    |     |
-                  |-----|----|----|-----|
-                        v    |    v
-                   --[:8081]-|-[:8080]-- 
-                  |     |    |    |     |
-            EC2   |     |    |____|     |
-                  |     | haproxy       |
-                  |     v               |
-                  |  [:3000]            |
-                  |      backend        |
-                  |_____________________|
+                                    -->  HTTPS      HTTP
+                                   |       |        |
+                                   |       v        v
+                   ----------------|----[:443]----[:80]----
+           ELB    |                |       |        |      |
+                  |  healthcheck   |       |_     _ |      |
+                  |       |        |          |  |         |
+                  |-------|--------|----------|--|---------|
+                          |        |          v  v
+                   ----[:8081]-----|--------[:8080]--------
+                  |       |        |           |           |
+            EC2   |       |         -------- HTTPS?        |
+                  |       V                    |           |
+                  |    checker              frontend       |
+                  |                            |           |
+                  |                         [:3000]        |
+                  |                         backend        |
+                  |________________________________________|
                   
 
 ```
