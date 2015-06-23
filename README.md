@@ -17,16 +17,17 @@ Binds your ELB HTTP and HTTPS listeners on `FRONTEND_PORT`  and your backend wit
                    ----------------|----[:443]----[:80]----
            ELB    |                |       |        |      |
                   |  healthcheck   |       |_     _ |      |
+                  |    /check      |          |  |         |
                   |       |        |          |  |         |
                   |-------|--------|----------|--|---------|
                           |        |          v  v
                    ----[:8081]-----|--------[:8080]--------
                   |       |        |           |           |
             EC2   |       |         -------- HTTPS?        |
-                  |       V                    |           |
-                  |    checker              frontend       |
-                  |                            |           |
-                  |                         [:3000]        |
+                  |       |                    |           |
+                  |       |                 frontend       |
+                  |       |                    |           |
+                  |        ------ > /check  [:3000]        |
                   |                         backend        |
                   |________________________________________|
                   
